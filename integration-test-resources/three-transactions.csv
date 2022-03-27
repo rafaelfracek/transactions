@@ -1,0 +1,4 @@
+transaction_id,transaction_amount,customer_first_name,customer_id,customer_last_name,transaction_date
+1,"243,33",Jan,1,Nowak,11.12.2020 14:57:21
+2,"15111,21",Anna,2,Nowak,01.12.2020 01:01:05
+3,"20,00",Anna,2,Nowak,29.12.2020 11:40:32

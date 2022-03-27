@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  mongodb:
+    image: mongo:4.4
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - ./docker-data/mongodb:/data/db
+    networks:
+      - transactions_network
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongodb:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  transactions:
+    image: task/transactions
+    container_name: transactions
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      - TRANSACTIONS_FILE=/data/transactions/transactions.csv
+      - USERS_FILE=/data/transactions/users.csv
+      - MONGO_DB_HOST=mongodb
+      - MONGO_DB_PORT=27017
+      - MONGO_DB_NAME=test
+      - MONGO_DB_USER=test
+      - MONGO_DB_PASSWORD=test
+    volumes:
+      - ./docker-data/transactions:/data/transactions
+    networks:
+      - transactions_network
+    ports:
+      - 8081:8080
+    restart: unless-stopped
+
+networks:
+  transactions_network:
+    driver: bridge
